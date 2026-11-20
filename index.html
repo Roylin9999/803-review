@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}</style>
+</head>
+<body>
+<title>803 複習基地</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+
+<script>
+/* =====================================================================
+   ★ 老師更新區：只要改這裡就好 ★
+
+   每一科都有一個 links 清單。新增一筆連結，就複製下面這一行，
+   放進該科的 [ ] 裡面，記得每筆之間用逗號隔開：
+
+     { title: "標題", type: "影片", url: "https://....", note: "一句說明（可不寫）" },
+
+   type 只能填三種："影片"、"網頁"、"小遊戲"
+   想讓某筆連結顯示「NEW」，加上 isNew: true
+   ===================================================================== */
+const SUBJECTS = [
+  {
+    id: "chinese",
+    name: "國文",
+    tagline: "課文、修辭、文言文",
+    links: [
+      // { title: "第一課 課文朗讀", type: "影片", url: "https://...", note: "" },
+    ],
+  },
+  {
+    id: "english",
+    name: "英語",
+    tagline: "單字、文法、聽力",
+    links: [],
+  },
+  {
+    id: "math",
+    name: "數學",
+    tagline: "觀念影片與練習",
+    links: [],
+  },
+  {
+    id: "science",
+    name: "自然",
+    tagline: "理化實驗與重點整理",
+    links: [
+      { title: "光學成像實驗室：透鏡與面鏡", type: "小遊戲", url: "science/optics/", note: "拖動物體看光線與成像（2上 4-2、4-4）", isNew: true },
+    ],
+  },
+  {
+    id: "social",
+    name: "社會",
+    tagline: "歷史、地理、公民",
+    links: [
+      { title: "社會科複習區", type: "網頁", url: "#", note: "老師已建好，網址待補上", isNew: true },
+    ],
+  },
+];
+</script>
+
+<style>
+/* Layout: 一排「課本書背」色塊當科目分頁，下方是該科的連結清單。 */
+:root {
+  --bg: #f3f5f2;
+  --surface: #ffffff;
+  --ink: #1d2420;
+  --muted: #5d6862;
+  --line: #d9dfdb;
+  --chalk: #2f4a3f;
+  --c-chinese: #b8452f;
+  --c-english: #2f6bb0;
+  --c-math: #7a4fb0;
+  --c-science: #2e8a5a;
+  --c-social: #b07a1e;
+  --font-display: "LXGW WenKai TC", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --font-body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141a17; --surface: #1c2420; --ink: #e8eee9; --muted: #9daaa3; --line: #2e3833; --chalk: #a9d1bd;
+    --c-chinese: #e07a63; --c-english: #6fa3e0; --c-math: #b08ae0; --c-science: #5fc28d; --c-social: #dcaa4e;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141a17; --surface: #1c2420; --ink: #e8eee9; --muted: #9daaa3; --line: #2e3833; --chalk: #a9d1bd;
+  --c-chinese: #e07a63; --c-english: #6fa3e0; --c-math: #b08ae0; --c-science: #5fc28d; --c-social: #dcaa4e;
+  color-scheme: dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+}
+.wrap {
+  max-width: 880px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 48px;
+  display: grid;
+  gap: 24px;
+}
+
+header { display: grid; gap: 4px; }
+.class-tag {
+  font-size: 13px; letter-spacing: .12em; color: var(--muted); font-weight: 500;
+}
+h1 {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 7vw, 44px);
+  line-height: 1.15;
+  margin: 0;
+  color: var(--chalk);
+  text-wrap: balance;
+}
+.lead { margin: 0; color: var(--muted); }
+
+/* 科目書背 */
+.spines {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+.spine {
+  appearance: none;
+  border: 0;
+  cursor: pointer;
+  border-radius: 6px 6px 3px 3px;
+  padding: 14px 6px 12px;
+  background: color-mix(in srgb, var(--c) 14%, var(--surface));
+  color: var(--ink);
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  border-bottom: 4px solid var(--c);
+  transition: transform .15s ease, background .15s ease;
+  font: inherit;
+}
+.spine:hover { transform: translateY(-2px); }
+.spine:focus-visible { outline: 3px solid var(--c); outline-offset: 2px; }
+.spine .s-name { font-family: var(--font-display); font-size: 22px; font-weight: 700; line-height: 1.2; }
+.spine .s-count { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.spine[aria-selected="true"] { background: var(--c); color: #fff; }
+.spine[aria-selected="true"] .s-count { color: rgba(255,255,255,.85); }
+
+/* 科目內容 */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--c);
+  border-radius: 10px;
+  padding: 20px;
+  display: grid;
+  gap: 16px;
+}
+.panel-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; }
+.panel-head h2 { font-family: var(--font-display); font-size: 28px; margin: 0; color: var(--c); }
+.panel-head p { margin: 0; color: var(--muted); font-size: 14px; }
+
+.filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  appearance: none; font: inherit; font-size: 14px; cursor: pointer;
+  border: 1px solid var(--line); background: transparent; color: var(--ink);
+  border-radius: 999px; padding: 4px 14px;
+}
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip:focus-visible { outline: 3px solid var(--c); outline-offset: 2px; }
+
+.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.item a {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color .15s ease, background .15s ease;
+}
+.item a:hover { border-color: var(--c); background: color-mix(in srgb, var(--c) 6%, var(--surface)); }
+.item a:focus-visible { outline: 3px solid var(--c); outline-offset: 2px; }
+.kind {
+  font-size: 12px; font-weight: 700; letter-spacing: .06em;
+  padding: 3px 8px; border-radius: 4px; white-space: nowrap;
+  background: color-mix(in srgb, var(--c) 16%, transparent); color: var(--c);
+}
+.item-text { min-width: 0; display: grid; gap: 2px; }
+.item-title { font-weight: 700; overflow-wrap: anywhere; }
+.item-note { font-size: 14px; color: var(--muted); overflow-wrap: anywhere; }
+.new { font-size: 11px; font-weight: 700; color: #fff; background: var(--c); border-radius: 3px; padding: 1px 5px; margin-left: 6px; vertical-align: 2px; }
+.go { color: var(--muted); font-size: 20px; }
+.pending a { border-style: dashed; }
+
+.empty {
+  border: 2px dashed var(--line); border-radius: 8px; padding: 28px 16px;
+  text-align: center; color: var(--muted);
+}
+.empty strong { display: block; font-family: var(--font-display); font-size: 20px; color: var(--ink); margin-bottom: 4px; }
+
+footer { font-size: 13px; color: var(--muted); text-align: center; }
+
+@media (max-width: 520px) {
+  .spines { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .panel { padding: 16px; }
+  .item a { grid-template-columns: minmax(0, 1fr) auto; }
+  .kind { grid-column: 1 / -1; justify-self: start; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="class-tag">八年三班・課後複習</span>
+    <h1>803 複習基地</h1>
+    <p class="lead">選一科，點進去看影片、讀重點、玩小遊戲。老師會持續新增內容。</p>
+  </header>
+
+  <nav class="spines" id="spines" role="tablist" aria-label="科目"></nav>
+
+  <section class="panel" id="panel" role="tabpanel" aria-live="polite"></section>
+
+  <footer>有連結打不開？請告訴老師。</footer>
+</div>
+
+<script>
+(function () {
+  const TYPES = ["影片", "網頁", "小遊戲"];
+  const spinesEl = document.getElementById("spines");
+  const panelEl = document.getElementById("panel");
+  let current = SUBJECTS[0].id;
+  let typeFilter = "全部";
+
+  function esc(s) {
+    return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+  function ready(l) { return l.url && l.url !== "#"; }
+
+  function renderSpines() {
+    spinesEl.innerHTML = SUBJECTS.map(s => {
+      const n = s.links.filter(ready).length;
+      return `<button class="spine" role="tab" id="tab-${s.id}" style="--c: var(--c-${s.id})"
+        aria-selected="${s.id === current}" data-id="${s.id}">
+        <span class="s-name">${esc(s.name)}</span>
+        <span class="s-count">${n ? n + " 項" : "準備中"}</span>
+      </button>`;
+    }).join("");
+  }
+
+  function renderPanel() {
+    const s = SUBJECTS.find(x => x.id === current);
+    panelEl.style.setProperty("--c", `var(--c-${s.id})`);
+    panelEl.setAttribute("aria-labelledby", "tab-" + s.id);
+    const present = TYPES.filter(t => s.links.some(l => l.type === t));
+    if (typeFilter !== "全部" && !present.includes(typeFilter)) typeFilter = "全部";
+    const shown = s.links.filter(l => typeFilter === "全部" || l.type === typeFilter);
+
+    const filters = present.length > 1
+      ? `<div class="filters">${["全部", ...present].map(t =>
+          `<button class="chip" data-type="${t}" aria-pressed="${t === typeFilter}">${t}</button>`).join("")}</div>`
+      : "";
+
+    const list = shown.length
+      ? `<ul class="list">${shown.map(l => {
+          const ok = ready(l);
+          return `<li class="item${ok ? "" : " pending"}">
+            <a href="${ok ? esc(l.url) : "#"}" ${ok ? 'target="_blank" rel="noopener"' : 'aria-disabled="true"'}>
+              <span class="kind">${esc(l.type || "網頁")}</span>
+              <span class="item-text">
+                <span class="item-title">${esc(l.title)}${l.isNew ? '<span class="new">NEW</span>' : ""}</span>
+                ${l.note ? `<span class="item-note">${esc(l.note)}</span>` : ""}
+              </span>
+              <span class="go" aria-hidden="true">${ok ? "›" : "…"}</span>
+            </a></li>`;
+        }).join("")}</ul>`
+      : `<div class="empty"><strong>${esc(s.name)}的內容準備中</strong>老師正在整理影片和練習，過幾天再回來看看。</div>`;
+
+    panelEl.innerHTML = `
+      <div class="panel-head"><h2>${esc(s.name)}</h2><p>${esc(s.tagline)}</p></div>
+      ${filters}${list}`;
+  }
+
+  function select(id) {
+    if (!SUBJECTS.some(s => s.id === id)) id = SUBJECTS[0].id;
+    current = id;
+    typeFilter = "全部";
+    renderSpines();
+    renderPanel();
+  }
+
+  spinesEl.addEventListener("click", e => {
+    const b = e.target.closest(".spine");
+    if (!b) return;
+    if (location.hash !== "#" + b.dataset.id) location.hash = b.dataset.id;
+    else select(b.dataset.id);
+  });
+  panelEl.addEventListener("click", e => {
+    const c = e.target.closest(".chip");
+    if (c) { typeFilter = c.dataset.type; renderPanel(); return; }
+    const a = e.target.closest('a[aria-disabled="true"]');
+    if (a) e.preventDefault();
+  });
+  window.addEventListener("hashchange", () => select(location.hash.slice(1)));
+  select(location.hash.slice(1));
+})();
+</script>
+
+</body>
+</html>

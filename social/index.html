@@ -1,0 +1,318 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Roy老師的社會探險地圖</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: an explorer's atlas. Hero with Roy waving, then three "routes" (grades), each a row of chapter stops on a contour-line paper ground. */
+:root{
+  --paper:#f3f6f1; --paper-2:#e6ede4; --card:#ffffff; --ink:#1d2a2a; --muted:#5b6b68; --line:#c9d6cf;
+  --g7:#0f8b7a; --g7-soft:#d6efe9;   /* 七年級 臺灣：海岸綠 */
+  --g8:#d0572b; --g8-soft:#f8e1d6;   /* 八年級 中國與東北亞：黃土橘 */
+  --g9:#2f5fb3; --g9-soft:#dde6f7;   /* 九年級 世界：海洋藍 */
+  --sun:#f2b632; --stamp:#9aa7a4;
+  --display:"LXGW WenKai TC","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#121a19; --paper-2:#1a2523; --card:#1c2826; --ink:#e8efec; --muted:#9fb0ac; --line:#2e3d3a;
+  --g7:#3cc4ae; --g7-soft:#173a35; --g8:#f08a5c; --g8-soft:#3d2419; --g9:#7ea4ec; --g9-soft:#1d2a45;
+  --sun:#f5c55a; --stamp:#6c7a77; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#121a19; --paper-2:#1a2523; --card:#1c2826; --ink:#e8efec; --muted:#9fb0ac; --line:#2e3d3a;
+  --g7:#3cc4ae; --g7-soft:#173a35; --g8:#f08a5c; --g8-soft:#3d2419; --g9:#7ea4ec; --g9-soft:#1d2a45;
+  --sun:#f5c55a; --stamp:#6c7a77; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;
+  background-image:repeating-radial-gradient(circle at 85% -10%, transparent 0 38px, var(--line) 38px 39px);
+  background-attachment:fixed}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px}
+
+/* hero */
+.hero{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;background:var(--card);border:2px solid var(--ink);border-radius:22px;padding:20px 24px;box-shadow:6px 6px 0 var(--ink)}
+.hero img{width:132px;height:auto;animation:wave 2.4s ease-in-out infinite;transform-origin:50% 90%}
+@keyframes wave{0%,60%,100%{transform:rotate(0)}70%{transform:rotate(-6deg)}80%{transform:rotate(5deg)}90%{transform:rotate(-3deg)}}
+.eyebrow{font-size:13px;letter-spacing:.12em;color:var(--muted);font-weight:700}
+h1{font-family:var(--display);font-size:clamp(30px,5vw,46px);line-height:1.15;margin:4px 0 8px;text-wrap:balance}
+h1 .hl{background:linear-gradient(transparent 62%,var(--sun) 62%)}
+.hero p{margin:0;color:var(--muted);max-width:56ch}
+.meter{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
+.bar{flex:1 1 200px;height:12px;border-radius:99px;background:var(--paper-2);border:1.5px solid var(--ink);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--sun)}
+.meter b{font-variant-numeric:tabular-nums}
+
+/* grade nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;gap:10px;flex-wrap:wrap;margin:26px 0 8px;padding:10px 0;background:var(--paper)}
+.nav a{font-weight:700;text-decoration:none;color:var(--ink);border:2px solid var(--ink);border-radius:99px;padding:6px 16px;background:var(--card);transition:transform .15s}
+.nav a:hover,.nav a:focus-visible{transform:translateY(-2px);outline:none}
+.nav a[data-g="7"]{box-shadow:3px 3px 0 var(--g7)} .nav a[data-g="8"]{box-shadow:3px 3px 0 var(--g8)} .nav a[data-g="9"]{box-shadow:3px 3px 0 var(--g9)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+
+/* grade section */
+section{margin-top:30px;scroll-margin-top:70px}
+.ghead{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;border-bottom:3px dashed var(--c);padding-bottom:8px;margin-bottom:16px}
+.ghead h2{font-family:var(--display);font-size:30px;margin:0;color:var(--c)}
+.ghead .book{font-weight:700;background:var(--c);color:var(--card);border-radius:8px;padding:2px 10px;font-size:14px}
+.ghead .sub{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:860px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.grid{grid-template-columns:1fr}}
+
+.card{position:relative;display:flex;flex-direction:column;gap:8px;background:var(--card);border:2px solid var(--line);border-radius:16px;padding:16px 16px 14px;min-width:0}
+.card .no{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--c);letter-spacing:.06em}
+.card .no span{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--soft);font-family:var(--display);font-size:17px}
+.card h3{font-family:var(--display);font-size:22px;line-height:1.3;margin:0;text-wrap:balance}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 6px}
+.chips li{list-style:none;font-size:13px;background:var(--soft);color:var(--ink);border-radius:6px;padding:1px 8px}
+.chips{padding:0}
+.foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.soon{font-size:13px;font-weight:700;color:var(--stamp);border:2px dashed var(--stamp);border-radius:8px;padding:2px 10px;transform:rotate(-3deg)}
+.kind{font-size:12px;color:var(--muted)}
+
+.card.live{border:2px solid var(--ink);box-shadow:5px 5px 0 var(--c);background:linear-gradient(var(--card),var(--card)) padding-box}
+.card.live .go{display:inline-flex;align-items:center;gap:6px;font-weight:900;text-decoration:none;color:var(--card);background:var(--c);border:2px solid var(--ink);border-radius:12px;padding:7px 14px;transition:transform .15s}
+.card.live .go:hover,.card.live .go:focus-visible{transform:translateY(-2px) rotate(-1deg);outline:none}
+.card.live .badge{position:absolute;top:-12px;right:12px;background:var(--sun);color:#1d2a2a;border:2px solid var(--ink);border-radius:99px;font-size:12px;font-weight:900;padding:1px 10px}
+.card.live .pointer{position:absolute;right:-6px;bottom:52px;width:70px;pointer-events:none}
+.card.extra{border-style:dashed}
+
+.g7{--c:var(--g7);--soft:var(--g7-soft)} .g8{--c:var(--g8);--soft:var(--g8-soft)} .g9{--c:var(--g9);--soft:var(--g9-soft)}
+
+.outro{display:flex;align-items:center;gap:16px;margin-top:44px;background:var(--card);border:2px solid var(--line);border-radius:18px;padding:14px 18px}
+.outro img{width:84px}
+.outro p{margin:0;color:var(--muted)}
+
+@media (max-width:560px){
+  .hero{grid-template-columns:1fr;text-align:left}
+  .hero img{width:96px}
+  .card.live .pointer{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* subject blocks */
+.filt{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+.filt button{font:inherit;font-weight:700;font-size:14px;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:10px;padding:4px 12px;cursor:pointer}
+.filt button[aria-pressed="true"]{border-color:var(--ink);background:var(--sun);color:#1d2a2a}
+.subj{margin:6px 0 22px}
+.subj[hidden]{display:none}
+.shead{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+.shead b{font-family:var(--display);font-size:20px;color:var(--ink);background:var(--soft);border:2px solid var(--c);border-radius:10px;padding:0 12px}
+.shead small{color:var(--muted)}
+.card.todo{border-style:dashed;background:transparent}
+.card.todo p{margin:0;color:var(--muted);font-size:14px}
+@media (max-width:640px){.filt{margin-left:0;width:100%}.nav{gap:6px;margin-top:16px}.nav a{padding:3px 12px;font-size:15px}.nav a span{display:none}section{scroll-margin-top:110px}.filt button{padding:3px 9px}}
+
+/* 穿越短片 */
+.vids{margin:4px 0 6px;background:var(--card);border:2px solid var(--ink);border-radius:18px;padding:16px;box-shadow:5px 5px 0 var(--c);scroll-margin-top:80px}
+.vhead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 4px}
+.vhead h4{font-family:var(--display);font-size:22px;margin:0}
+.vhead small{color:var(--muted)}
+.vids>p{margin:0 0 12px;color:var(--muted);font-size:14px}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+@media (max-width:520px){.vgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.vcard.wip{grid-column:1/-1}.vcard.wip .ph{aspect-ratio:auto;padding:14px}}
+.vcard{display:flex;flex-direction:column;gap:6px;min-width:0}
+.vcard video{width:100%;aspect-ratio:9/16;border-radius:12px;background:#000;border:2px solid var(--line);display:block}
+.vtag{align-self:flex-start;font-size:12px;font-weight:700;background:var(--soft);color:var(--ink);border-radius:6px;padding:1px 8px}
+.vcard h5{font-family:var(--display);font-size:18px;margin:0;line-height:1.3}
+.vcard p{margin:0;font-size:13px;color:var(--muted);line-height:1.5}
+.vcard.wip .ph{aspect-ratio:9/16;border:2px dashed var(--stamp);border-radius:12px;display:grid;place-items:center;color:var(--stamp);font-weight:700;text-align:center;padding:10px}
+.card .vlink{font-size:13px;font-weight:700;color:var(--c);text-decoration:none;border-bottom:2px solid var(--soft)}
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <img src="img/wave.png" alt="Roy老師揮手打招呼">
+    <div>
+      <div class="eyebrow">115學年度 上學期 · 國中社會（地理・歷史・公民）</div>
+      <h1>Roy老師的<span class="hl">社會探險地圖</span></h1>
+      <p>選你的年級和科目，挑一課出發！亮起來的課可以直接上課；標著「即將推出」的，老師正在準備中。</p>
+      <div class="meter"><div class="bar"><i id="barfill"></i></div><b id="count"></b></div>
+    </div>
+  </header>
+
+  <nav class="nav" aria-label="年級">
+    <a href="#g7" data-g="7">七年級<span> · 臺灣</span></a>
+    <a href="#g8" data-g="8">八年級<span> · 中國與東北亞</span></a>
+    <a href="#g9" data-g="9">九年級<span> · 世界</span></a>
+    <span class="filt" role="group" aria-label="科目">
+      <button data-s="all" aria-pressed="true">全部</button><button data-s="geo" aria-pressed="false">地理</button><button data-s="his" aria-pressed="false">歷史</button><button data-s="civ" aria-pressed="false">公民</button><button data-s="rev" aria-pressed="false">段考複習</button>
+    </span>
+  </nav>
+
+  <div id="grades"></div>
+
+  <div class="outro">
+    <img src="img/think.png" alt="">
+    <p>想先上哪一課？跟Roy老師說，下一堂互動課就從那裡開始做。</p>
+  </div>
+</div>
+
+<script>
+const LIVE = {"7-3":"https://claude.ai/artifact/KiD2M812k8KsQWKJ1AJ9oN","7-h3":"https://claude.ai/artifact/RAK9yg1ikVRQY8kKpFrana","7-c3":"https://claude.ai/artifact/R82874uC2ckijjwr8KM1xA","9-h3":"https://claude.ai/artifact/5NRQYsF7LNsYyGkjVrrENj","9-c3":"https://claude.ai/artifact/JBkdoeGFgsSQvUqQPb1wrX","9-3":"https://claude.ai/artifact/EiYpjnWs2WvFBvyFD5Bqap","9-4":"https://claude.ai/artifact/8e2DS9LADoTURGEtN4Dcv3","8-3":"https://claude.ai/artifact/8DTs1WWmh8G1dmZ5p6VKNv","8-4":"https://claude.ai/artifact/VCqMVsp1bVnELsMy7kLqQu","8-r3":"https://claude.ai/artifact/9e926KDfWEfux5BMXVGXGE","8-r4":"https://claude.ai/artifact/N189XUw8kqvrtsUfnbiwCq","8-h3":"https://claude.ai/artifact/WTQ7cjQZwoXQNCnCAgRad8","8-h4":"https://claude.ai/artifact/G2eBQqAnaintBAp6h51oHr","8-c3":"https://claude.ai/artifact/8VSK3WGLNhhvQWSE8DwGxK","8-c4":"https://claude.ai/artifact/RX9ErrTHTe6qHJVYMDZa1C","9-h4":"https://claude.ai/artifact/PnxqiNX4qfndAMN3hQGtoL","9-c4":"https://claude.ai/artifact/EKecP1w5SbcnAcKE4xBu2E","7-4":"https://claude.ai/artifact/ErPBfzs6YXkMAPE2cZFTEM","7-h4":"https://claude.ai/artifact/USsY2TVhcAcGjENqMTU76u","7-c4":"https://claude.ai/artifact/Tqyfsm4pjyiWNorvso7v4q","9-x2":"https://claude.ai/artifact/4ZzfDT7JMehrjjZsgHn1Tx"};
+// 穿越短片：key 對應課程（例如 "8-h3" = 八年級歷史第三課）。新集數做好後，在陣列加一筆、把影片放到 video/ 即可。
+const VIDEOS = {"8-h3":{title:"Roy老師穿越到宋朝",note:"每集約 90 秒，10 集照課本順序排好：先看短片抓故事，再進互動課學重點。",
+  list:[
+   {ep:1,t:"杯酒釋兵權",tag:"宋初：重文輕武",d:"宋太祖一場酒宴，就讓將領交出兵權。",src:"video/song-ep1.mp4",poster:"video/song-ep1.jpg"},
+   {ep:2,t:"澶淵之盟",tag:"宋遼對峙",d:"遼軍打到澶州，寇準逼皇帝上前線，最後用銀絹換和平。",src:"video/song-ep2.mp4",poster:"video/song-ep2.jpg"},
+   {ep:3,t:"靖康之禍",tag:"北宋滅亡",d:"聯金滅遼卻引狼入室，金軍攻破汴京，北宋滅亡。",src:"video/song-ep3.mp4",poster:"video/song-ep3.jpg"},
+   {ep:4,t:"岳飛抗金",tag:"宋金對峙",d:"岳家軍北伐，卻被十二道金牌召回，宋金以淮河為界。",src:"video/song-ep4.mp4",poster:"video/song-ep4.jpg"},
+   {ep:5,t:"蒙古崛起",tag:"蒙古崛起",d:"成吉思汗統一蒙古，南宋聯蒙滅金，接著換自己被打。",src:"video/song-ep5.mp4",poster:"video/song-ep5.jpg"},
+   {ep:6,t:"元朝四等人",tag:"元朝統治・元曲",d:"忽必烈把人分四等，讀書人當不了官，轉行寫出元曲。（中英字幕）",src:"video/song-ep6.mp4",poster:"video/song-ep6.jpg"},
+   {ep:7,t:"占城稻與夜市",tag:"宋代經濟：農業與城市",d:"引進占城稻、人口破億，坊市制度被打破，夜市開到半夜。",src:"video/song-ep7.mp4",poster:"video/song-ep7.jpg"},
+   {ep:8,t:"紙幣與海上貿易",tag:"宋代經濟：紙幣與貿易",d:"銅錢太重就發明交子；泉州成為東方第一大港，設市舶司收稅。",src:"video/song-ep8.mp4",poster:"video/song-ep8.jpg"},
+   {ep:9,t:"元代驛站與理學",tag:"文化交流：驛站與理學",d:"驛站把命令和商人送遍各地；朱熹的四書集注成了考試標準答案。",src:"video/song-ep9.mp4",poster:"video/song-ep9.jpg"},
+   {ep:10,t:"宋元三大發明",tag:"文化交流：三大發明",d:"活字印刷、指南針、火藥在宋朝變實用，再一路傳到歐洲。",src:"video/song-ep10.mp4",poster:"video/song-ep10.jpg"},
+  ]}};
+const SUBJ = {geo:"地理",his:"歷史",civ:"公民",rev:"段考複習"};
+const GRADES = [
+  {id:"g7",g:7,name:"七年級",book:"第一冊（1上）",sub:"臺灣的地理環境、臺灣史前到清帝國、公民德性與家庭校園",
+   geo:[
+    ["認識位置與地圖",["方位","經緯線網格","地圖判讀"]],
+    ["世界中的臺灣",["七大洲與海洋","東亞島弧","臺灣的位置與範圍","行政區"]],
+    ["地形",["五大地形與營力","等高線與地形表示","臺灣地形分布"]],
+    ["海岸與島嶼",["岩岸與沙岸","臺灣四段海岸","島嶼的成因"]],
+    ["天氣與氣候",["氣壓與風","鋒面","全球氣候區"]],
+    ["水文",["水循環","河川與水庫"]],
+   ],
+   his:[
+    ["史前臺灣與原住民文化",["史前文化","南島語族","原住民族"]],
+    ["大航海時代各方勢力的競逐",["荷蘭與西班牙","鄭氏政權"]],
+    ["大航海時代臺灣原住民與外來者",["荷蘭與原住民","西班牙與原住民","鄭氏與原住民"]],
+    ["清帝國統治政策的變遷",["為防臺而治臺","外力入侵","現代化建設"]],
+    ["清帝國時期農商業的發展",["土地開墾","水利","郊商與貿易"]],
+    ["清帝國時期社會文化的變遷",["移民社會","民變與械鬥","教育與信仰"]],
+   ],
+   civ:[
+    ["公民與公民德性",["公民身分","公民德性"]],
+    ["人性尊嚴與人權保障",["人性尊嚴","人權"]],
+    ["家庭生活",["親屬關係","家庭型態","權利與義務"]],
+    ["變遷中的家庭",["家庭功能的轉變","少子化與高齡社會","家庭暴力防治"]],
+    ["學生權利與校園生活",["學生權利","校園規範"]],
+    ["部落與公民參與",["原住民族部落","公民參與"]],
+   ]},
+  {id:"g8",g:8,name:"八年級",book:"第三冊（2上）",sub:"中國與東北亞的地理、從商周到清末、民主政治與政府",
+   geo:[
+    ["中國的地形",["地勢三級階梯","地形區","行政區"]],
+    ["中國的氣候",["季風","氣候類型"]],
+    ["中國的人口",["人口分布","傳統農業區"]],
+    ["中國的經濟發展與全球關連",["經濟特區","一帶一路","RCEP"]],
+    ["東北亞的自然環境與文化",["季風與洋流","日本與南北韓"]],
+    ["東北亞的經濟發展與挑戰",["日本工業區","產業轉型"]],
+   ],
+   his:[
+    ["商周至隋唐時期的國家與社會",["商周","秦漢","隋唐"]],
+    ["商周至隋唐時期的民族與文化",["民族互動","文化交流"]],
+    ["宋元多民族並立的時期",["遼金元","宋代經濟","文化交流"]],
+    ["明清時期東亞世界的變動",["明清帝國","朝貢貿易","西學東漸"]],
+    ["西力衝擊下的東亞世界",["鴉片戰爭","不平等條約","明治維新"]],
+    ["清末變局與社會文化的變遷",["自強運動","戊戌變法","辛亥革命"]],
+   ],
+   civ:[
+    ["國家與民主政治",["國家的要素","民主政治"]],
+    ["憲法與權利保障",["憲法","基本權利"]],
+    ["法治與權力分立",["人治與法治","三權與五權"]],
+    ["中央政府",["總統與五院","制衡關係"]],
+    ["地方政府",["地方自治","縣市政府"]],
+    ["政治參與",["選舉","公民投票"]],
+   ]},
+  {id:"g9",g:9,name:"九年級",book:"第五冊（3上）",sub:"環遊歐美、大洋洲與兩極，從古文明到現代國家，認識經濟生活",
+   geo:[
+    ["歐洲概述",["地形","氣候類型","歐洲的國家"]],
+    ["歐洲區域特色與俄羅斯",["西歐與南歐","北歐與東歐","俄羅斯"]],
+    ["北美洲",["地形","氣候","美國與加拿大"]],
+    ["中南美洲",["地形","氣候分布","中南美洲的國家"]],
+    ["大洋洲",["澳洲與紐西蘭","太平洋島嶼"]],
+    ["兩極地區與全球氣候變遷",["北極與南極","氣候變遷"]],
+   ],
+   his:[
+    ["西亞與非洲的古文明",["兩河流域","古埃及"]],
+    ["古希臘羅馬文化的開展",["希臘城邦","羅馬帝國"]],
+    ["普世宗教的發展",["佛教","基督教","伊斯蘭教"]],
+    ["近代歐洲與多元世界",["文藝復興","大航海時代","殖民統治"]],
+    ["近代歐洲的變革",["科學革命","啟蒙運動"]],
+    ["現代國家的建立",["英國革命","美國獨立","法國大革命"]],
+   ],
+   civ:[
+    ["選擇與消費",["機會成本","消費者權益"]],
+    ["生產與生產資源",["生產要素","分工"]],
+    ["市場與競爭",["交易與市場","競爭方式與程度","消費者權益"]],
+    ["勞動參與",["有酬與無酬勞動","勞基法與就保法"]],
+    ["貨幣的使用",["貨幣功能","金融機構"]],
+    ["國際貿易與外幣",["比較利益","匯率"]],
+   ],
+   extra:{geo:[["氣候判讀面面觀",["氣候圖判讀","跨章複習"],"9-x","專題"],["美洲的氣候",["北美洲＋中南美洲","氣候成因","氣候圖判讀"],"9-x2","段考專題"]],
+          his:[["歷史時空窗",["跨章整理","時空對照"],"9-hx1","專題"],["工業革命",["彈性單元","3下先修"],"9-hx2","彈性單元"]]}},
+];
+// 段考複習：每一課一張，地理・歷史・公民同一課一起複習
+for(const G of GRADES) G.rev=G.geo.map((_,i)=>[`段考複習：第${"一二三四五六"[i]}課`,[G.geo[i][0],G.his[i][0],G.civ[i][0]],`${G.g}-r${i+1}`]);
+const KEYP = {geo:"",his:"h",civ:"c"};
+const num = n => "一二三四五六七八九十"[n-1];
+let total=0, live=0;
+const root=document.getElementById("grades");
+function card(it){
+  total++;
+  const url=LIVE[it.key]; if(url) live++;
+  const el=document.createElement("article");
+  el.className="card"+(url?" live":"")+(it.extra?" extra":"");
+  el.innerHTML=`${url?'<span class="badge">已開放</span>':''}
+    <div class="no"><span>${it.extra?"★":it.label.slice(1,2)}</span>${it.label}</div>
+    <h3>${it.t}</h3>
+    <ul class="chips">${it.k.map(x=>`<li>${x}</li>`).join("")}</ul>
+    <div class="foot">${url
+      ?`<a class="go" href="${url}" target="_blank" rel="noopener">開始上課 ▶</a><span class="kind">互動課 · 有語音</span>`
+      :`<span class="soon">即將推出</span><span class="kind">準備中</span>`}</div>
+    ${VIDEOS[it.key]?`<a class="vlink" href="#v-${it.key}">🎬 看 ${VIDEOS[it.key].list.length} 部穿越短片 ↓</a>`:''}
+    ${url?'<img class="pointer" src="img/point.png" alt="">':''}`;
+  return el;
+}
+function vids(k,lesson){
+  const V=VIDEOS[k], el=document.createElement("div");
+  el.className="vids"; el.id="v-"+k;
+  el.innerHTML=`<div class="vhead"><h4>🎬 ${V.title}</h4><small>${lesson} · 穿越短片</small></div><p>${V.note}</p>
+   <div class="vgrid">${V.list.map(v=>`<figure class="vcard" style="margin:0"><span class="vtag">${v.tag}</span>
+     <video controls playsinline preload="none" poster="${v.poster}" src="${v.src}" aria-label="第${v.ep}集 ${v.t}"></video>
+     <h5>第${v.ep}集　${v.t}</h5><p>${v.d}</p></figure>`).join("")}
+     ${V.soon?`<div class="vcard wip"><div class="ph">🎞️<br>${V.soon}</div></div>`:""}</div>`;
+  return el;
+}
+document.addEventListener("play",e=>{document.querySelectorAll(".vids video").forEach(v=>{if(v!==e.target)v.pause()})},true);
+for(const G of GRADES){
+  const s=document.createElement("section");
+  s.id=G.id; s.className="g"+G.g;
+  s.innerHTML=`<div class="ghead"><h2>${G.name}</h2><span class="book">${G.book}</span><span class="sub">${G.sub}</span></div>`;
+  for(const sj of ["geo","his","civ","rev"]){
+    const list=G[sj];
+    if(sj==="rev" && !list) continue;
+    const b=document.createElement("div"); b.className="subj"; b.dataset.s=sj;
+    b.innerHTML=`<div class="shead"><b>${SUBJ[sj]}</b><small>${sj==="rev"?"同一課的地理・歷史・公民 一次複習":list?list.length+" 課"+(((G.extra||{})[sj]||[]).length?" ＋ 專題":""):""}</small></div><div class="grid"></div>`;
+    const grid=b.querySelector(".grid");
+    if(!list){
+      const el=document.createElement("article"); el.className="card todo";
+      el.innerHTML=`<div class="no">${SUBJ[sj]}</div><h3>章節整理中</h3><p>這個年級的${SUBJ[sj]}章節還沒放上來，老師準備好就會出現。</p>`;
+      grid.appendChild(el);
+    } else {
+      list.forEach((c,i)=>grid.appendChild(card(sj==="rev"
+        ?{t:c[0],k:c[1],label:"段考複習",key:c[2],extra:true}
+        :{t:c[0],k:c[1],label:`第${num(i+1)}課`,key:`${G.g}-${KEYP[sj]}${i+1}`})));
+      ((G.extra||{})[sj]||[]).forEach(c=>grid.appendChild(card({t:c[0],k:c[1],label:c[3],key:c[2],extra:true})));
+      if(sj!=="rev") list.forEach((c,i)=>{const k=`${G.g}-${KEYP[sj]}${i+1}`; if(VIDEOS[k]) b.appendChild(vids(k,`第${num(i+1)}課 ${c[0]}`));});
+    }
+    s.appendChild(b);
+  }
+  root.appendChild(s);
+}
+document.getElementById("count").textContent=`已開放 ${live} / ${total} 堂`;
+document.getElementById("barfill").style.width=(live/total*100)+"%";
+const btns=[...document.querySelectorAll(".filt button")];
+function setS(v){
+  btns.forEach(x=>x.setAttribute("aria-pressed",x.dataset.s===v));
+  document.querySelectorAll(".subj").forEach(d=>d.hidden=!(v==="all"||d.dataset.s===v));
+  try{localStorage.setItem("roy-subj",v)}catch(e){}
+}
+btns.forEach(x=>x.onclick=()=>setS(x.dataset.s));
+try{const v=localStorage.getItem("roy-subj"); if(v&&SUBJ[v]||v==="all") setS(v)}catch(e){}
+</script>
+
+</body></html>

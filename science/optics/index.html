@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>光學成像實驗室</title>
+<meta name="description" content="國中自然 2上 第4章：拖動物體，觀察凸透鏡、凹透鏡、平面鏡、凹面鏡、凸面鏡的光線與成像。">
+<style>
+:root{
+  --bg:#f6f7fb; --card:#ffffff; --ink:#1d2433; --muted:#5d6678; --line:#d9dde7;
+  --axis:#8a93a6; --optic:#2f7fd8; --optic-fill:rgba(47,127,216,.16);
+  --obj:#e8590c; --img:#7b3fe4; --r1:#e03131; --r2:#2b8a3e; --r3:#1971c2;
+  --accent:#2f7fd8; --chip-real:#d9480f; --chip-virt:#6741d9; --ok:#2b8a3e; --bad:#c92a2a;
+  --svgbg:#fbfcff;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11141b; --card:#1a1f2b; --ink:#e7eaf2; --muted:#9aa3b5; --line:#2c3344;
+    --axis:#6b7488; --optic:#74b3ff; --optic-fill:rgba(116,179,255,.18);
+    --obj:#ff8a3d; --img:#b197fc; --r1:#ff6b6b; --r2:#51cf66; --r3:#4dabf7;
+    --accent:#74b3ff; --chip-real:#ff8a3d; --chip-virt:#b197fc; --ok:#51cf66; --bad:#ff6b6b;
+    --svgbg:#141925;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11141b; --card:#1a1f2b; --ink:#e7eaf2; --muted:#9aa3b5; --line:#2c3344;
+  --axis:#6b7488; --optic:#74b3ff; --optic-fill:rgba(116,179,255,.18);
+  --obj:#ff8a3d; --img:#b197fc; --r1:#ff6b6b; --r2:#51cf66; --r3:#4dabf7;
+  --accent:#74b3ff; --chip-real:#ff8a3d; --chip-virt:#b197fc; --ok:#51cf66; --bad:#ff6b6b;
+  --svgbg:#141925;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:system-ui,-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+  line-height:1.55;font-size:16px}
+.wrap{max-width:980px;margin:0 auto;padding:12px 16px 40px}
+header{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:4px 0 10px}
+header h1{font-size:1.3rem;margin:0;flex:1 1 auto}
+header a{color:var(--accent);text-decoration:none;font-size:.95rem}
+.sub{color:var(--muted);font-size:.9rem;margin:-6px 0 10px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;border:1.5px solid var(--line);background:var(--card);color:var(--ink);
+  padding:8px 14px;border-radius:999px;font-size:.98rem;cursor:pointer;font-family:inherit}
+.tab[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:10px}
+.stage{padding:0;overflow:hidden;position:relative}
+svg#sim{display:block;width:100%;height:auto;background:var(--svgbg);touch-action:none;user-select:none;-webkit-user-select:none}
+.hint{position:absolute;left:10px;top:8px;font-size:.8rem;color:var(--muted);pointer-events:none;
+  background:color-mix(in srgb,var(--card) 80%,transparent);padding:2px 8px;border-radius:8px}
+.offscreen{position:absolute;right:10px;top:8px;font-size:.8rem;color:var(--img);font-weight:600;
+  background:color-mix(in srgb,var(--card) 85%,transparent);padding:2px 8px;border-radius:8px;display:none}
+.grid{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:760px){.grid{grid-template-columns:1.1fr 1fr}}
+.result h2,.controls h2,.legend h2{font-size:1rem;margin:0 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.chip{padding:4px 12px;border-radius:999px;font-weight:700;font-size:1.05rem;border:2px solid currentColor}
+.chip.real{color:var(--chip-real)} .chip.virt{color:var(--chip-virt)}
+.chip.neutral{color:var(--ink)} .chip.none{color:var(--muted)}
+.nums{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin:6px 0}
+.num{background:var(--bg);border-radius:10px;padding:6px 10px}
+.num b{display:block;font-size:1.15rem}
+.num span{font-size:.8rem;color:var(--muted)}
+.explain{margin:6px 0 0;font-size:.95rem}
+.tag{display:inline-block;font-size:.75rem;border:1px solid var(--line);border-radius:6px;padding:0 6px;color:var(--muted);margin-left:4px}
+.row{display:flex;align-items:center;gap:10px;margin:8px 0}
+.row label{flex:0 0 5.2em;font-size:.95rem}
+.row input[type=range]{flex:1;accent-color:var(--accent);height:28px}
+.row output{flex:0 0 4.2em;text-align:right;font-variant-numeric:tabular-nums}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.btn{border:1.5px solid var(--line);background:var(--bg);color:var(--ink);padding:6px 10px;border-radius:10px;
+  font-size:.9rem;cursor:pointer;font-family:inherit}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.toggles{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:8px;font-size:.95rem}
+.toggles label{display:flex;align-items:center;gap:5px;cursor:pointer}
+.toggles input{width:18px;height:18px;accent-color:var(--accent)}
+.legend ul{margin:0;padding-left:0;list-style:none}
+.legend li{margin:4px 0;display:flex;gap:8px;align-items:flex-start;font-size:.95rem}
+.sw{flex:0 0 22px;height:4px;border-radius:2px;margin-top:.7em}
+.quiz{display:none}
+.quiz.on{display:block}
+.quiz .q{display:flex;gap:6px;margin:6px 0;flex-wrap:wrap}
+.quiz .q .btn[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+.feedback{font-weight:700;margin-top:6px}
+.feedback.ok{color:var(--ok)} .feedback.bad{color:var(--bad)}
+details{margin-top:10px}
+summary{cursor:pointer;font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:.88rem;margin-top:8px}
+th,td{border:1px solid var(--line);padding:5px 6px;text-align:center}
+th{background:var(--bg)}
+tr.cur td{background:color-mix(in srgb,var(--accent) 18%,transparent);font-weight:700}
+.tblwrap{overflow-x:auto}
+.note{font-size:.85rem;color:var(--muted);margin-top:6px}
+svg text{font-family:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🔦 光學成像實驗室</h1>
+    <a href="../../">← 回 803 複習基地</a>
+  </header>
+  <p class="sub">國中自然 2上 第4章（4-2 面鏡成像、4-4 透鏡成像）・拖動橘色物體，看光線怎麼走、像在哪裡。</p>
+
+  <div class="tabs" role="group" aria-label="選擇鏡子">
+    <button class="tab" data-mode="convexLens" aria-pressed="true">凸透鏡</button>
+    <button class="tab" data-mode="concaveLens" aria-pressed="false">凹透鏡</button>
+    <button class="tab" data-mode="planeMirror" aria-pressed="false">平面鏡</button>
+    <button class="tab" data-mode="concaveMirror" aria-pressed="false">凹面鏡</button>
+    <button class="tab" data-mode="convexMirror" aria-pressed="false">凸面鏡</button>
+  </div>
+
+  <div class="card stage">
+    <svg id="sim" viewBox="-50 -26 100 52" style="overflow:hidden" preserveAspectRatio="xMidYMid meet" aria-label="成像模擬圖">
+      <defs>
+        <marker id="ah1" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--r1)"/></marker>
+        <marker id="ah2" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--r2)"/></marker>
+        <marker id="ah3" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--r3)"/></marker>
+      </defs>
+      <g id="gAxis"></g>
+      <g id="gOptic"></g>
+      <g id="gRays"></g>
+      <g id="gImage"></g>
+      <g id="gObject" style="cursor:grab"></g>
+    </svg>
+        <div class="offscreen" id="offscreen">像在畫面外（很遠）</div>
+  </div>
+
+  <p class="note" style="margin:6px 4px 0">👆 左右拖動橘色物體・拖頂端圓點改高度・F＝焦點，2F＝2 倍焦距</p>
+  <div class="grid">
+    <div class="card result">
+      <h2>成像結果</h2>
+      <div id="resultBox">
+        <div class="chips" id="chips"></div>
+        <div class="nums">
+          <div class="num"><span>物距（物體到鏡）</span><b id="uOut">–</b></div>
+          <div class="num"><span>像距（像到鏡）</span><b id="vOut">–</b></div>
+          <div class="num"><span>像的位置</span><b id="posOut" style="font-size:1rem">–</b></div>
+          <div class="num"><span>像的大小</span><b id="mOut" style="font-size:1rem">–</b></div>
+        </div>
+        <p class="explain" id="explain"></p>
+      </div>
+      <div class="quiz" id="quiz">
+        <p style="margin:0 0 4px">光線射到鏡子後會怎麼走？先想想看，像會是什麼樣子？</p>
+        <div class="q" data-q="type"><button class="btn" data-v="實像">實像</button><button class="btn" data-v="虛像">虛像</button><button class="btn" data-v="無法成像">無法成像</button></div>
+        <div class="q" data-q="dir"><button class="btn" data-v="正立">正立</button><button class="btn" data-v="倒立">倒立</button></div>
+        <div class="q" data-q="size"><button class="btn" data-v="放大">放大</button><button class="btn" data-v="等大">等大</button><button class="btn" data-v="縮小">縮小</button></div>
+        <button class="btn primary" id="checkBtn">揭曉答案</button>
+        <div class="feedback" id="feedback"></div>
+      </div>
+    </div>
+
+    <div class="card controls">
+      <h2>操作</h2>
+      <div class="row"><label for="uSl">物距</label><input id="uSl" type="range" min="1" max="45" step="0.1"><output id="uLbl"></output></div>
+      <div class="row"><label for="hSl">物高</label><input id="hSl" type="range" min="2" max="12" step="0.5"><output id="hLbl"></output></div>
+      <div class="row" id="fRow"><label for="fSl">焦距 f</label><input id="fSl" type="range" min="6" max="15" step="0.5"><output id="fLbl"></output></div>
+      <div class="presets" id="presets"></div>
+      <div class="toggles">
+        <label><input type="checkbox" id="t1" checked><span style="color:var(--r1)">光線①</span></label>
+        <label><input type="checkbox" id="t2" checked><span style="color:var(--r2)">光線②</span></label>
+        <label><input type="checkbox" id="t3" checked><span style="color:var(--r3)">光線③</span></label>
+        <label><input type="checkbox" id="tQuiz">🤔 先猜再看</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="card legend">
+    <h2>三條特別的光線</h2>
+    <ul id="legendList"></ul>
+    <p class="note">實線＝真的光線；虛線＝光線的「延長線」，光沒有真的走到那裡。很多條光線<b>真的會聚</b>的地方是<b>實像</b>（可以投影在紙屏上）；只有<b>延長線</b>交會的地方是<b>虛像</b>（只能用眼睛看，紙屏上看不到）。</p>
+    <details id="tblDetails">
+      <summary>📋 成像性質簡表（目前的情況會反白）</summary>
+      <div class="tblwrap" id="tblWrap"></div>
+    </details>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+const NS="http://www.w3.org/2000/svg";
+const XMIN=-50,XMAX=50,YMAX=26;
+const $=id=>document.getElementById(id);
+const svg=$("sim");
+const g={axis:$("gAxis"),optic:$("gOptic"),rays:$("gRays"),image:$("gImage"),object:$("gObject")};
+
+const MODES={
+  convexLens:{name:"凸透鏡",lens:true,sign:1},
+  concaveLens:{name:"凹透鏡",lens:true,sign:-1},
+  planeMirror:{name:"平面鏡",lens:false,sign:0},
+  concaveMirror:{name:"凹面鏡",lens:false,sign:1},
+  convexMirror:{name:"凸面鏡",lens:false,sign:-1}
+};
+const st={mode:"convexLens",u:30,h:6,f:10,show:[true,true,true],quiz:false,revealed:true,guess:{}};
+try{const m=localStorage.getItem("optics-mode");if(m&&MODES[m])st.mode=m;}catch(e){}
+
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function clear(n){while(n.firstChild)n.removeChild(n.firstChild);}
+// SVG y is downward; world y is upward
+const Y=y=>-y;
+function fmt(x){return (Math.round(x*10)/10).toFixed(1).replace(/\.0$/,"");}
+
+/* ---------- physics ---------- */
+function solve(){
+  const M=MODES[st.mode], u=st.u, h=st.h;
+  if(M.sign===0){ // plane mirror
+    return {type:"virtual",v:-u,m:1,ix:u,iy:h,inf:false};
+  }
+  const f=M.sign*st.f; // signed focal length (real-is-positive)
+  if(Math.abs(u-f)<1e-6) return {type:"none",inf:true,f};
+  const v=u*f/(u-f), m=-v/u;
+  const ix = M.lens ? v : -v;
+  return {type: v>0?"real":"virtual", v, m, ix, iy:m*h, inf:false, f};
+}
+
+/* ---------- drawing helpers ---------- */
+function line(p,q,color,dash,parent,marker){
+  const a={x1:p[0],y1:Y(p[1]),x2:q[0],y2:Y(q[1]),stroke:color,"stroke-width":dash?0.32:0.45,"stroke-linecap":"round",fill:"none"};
+  if(dash)a["stroke-dasharray"]="1.1 0.9";
+  if(marker)a["marker-mid"]=marker;
+  return el("line",a,parent);
+}
+function rayPath(pts,color,marker,parent){
+  let d="";
+  pts.forEach((p,i)=>{d+=(i?" L":"M")+p[0]+","+Y(p[1]);});
+  el("path",{d,stroke:color,"stroke-width":0.45,fill:"none","stroke-linejoin":"round","stroke-linecap":"round"},parent);
+  // one arrowhead in the middle of each segment (skip the last, very long one)
+  for(let i=1;i<Math.min(pts.length,3);i++){
+    const a=pts[i-1],b=pts[i],dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);
+    if(len<2.5)continue;
+    const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2,ang=Math.atan2(-dy,dx)*180/Math.PI;
+    el("path",{d:"M1.1,0 L-0.9,-0.8 L-0.9,0.8 Z",fill:color,transform:`translate(${mx},${Y(my)}) rotate(${ang})`},parent);
+  }
+}
+function extend(p,dir,len){const n=Math.hypot(dir[0],dir[1])||1;return [p[0]+dir[0]/n*len,p[1]+dir[1]/n*len];}
+function arrow(x,h,color,dashed,parent,width){
+  const w=width||0.7, head=Math.min(2.2,Math.abs(h)*0.35+0.6), s=Math.sign(h)||1;
+  const grp=el("g",{},parent);
+  const tipY=h, baseY=h-s*head;
+  el("line",{x1:x,y1:0,x2:x,y2:Y(baseY),stroke:color,"stroke-width":w,"stroke-dasharray":dashed?"1 .7":"none"},grp);
+  el("path",{d:`M${x},${Y(tipY)} L${x-1.2},${Y(baseY)} L${x+1.2},${Y(baseY)} Z`,fill:dashed?"none":color,stroke:color,"stroke-width":dashed?0.35:0.1,"stroke-dasharray":dashed?"0.8 .5":"none"},grp);
+  return grp;
+}
+let FS=1;
+function label(x,y,txt,color,size,anchor,parent,weight){
+  return el("text",{x,y:Y(y),fill:color,"font-size":(size||2.2)*FS,"text-anchor":anchor||"middle","font-weight":weight||"400"},parent).appendChild(document.createTextNode(txt));
+}
+function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+
+/* ---------- scene ---------- */
+function drawAxis(){
+  clear(g.axis);
+  const M=MODES[st.mode], ax="var(--axis)";
+  el("line",{x1:XMIN,y1:0,x2:XMAX,y2:0,stroke:ax,"stroke-width":0.22},g.axis);
+  label(45,1.2,"主軸","var(--muted)",1.9,"end",g.axis);
+  if(M.sign===0){ label(-25,-24.3,"鏡前（物體這側）","var(--muted)",1.9,"middle",g.axis); label(25,-24.3,"鏡後","var(--muted)",1.9,"middle",g.axis); return; }
+  const f=st.f, pts=[];
+  if(M.lens){ pts.push([-f,"F"],[f,"F"],[-2*f,"2F"],[2*f,"2F"]); }
+  else if(M.sign>0){ pts.push([-f,"F"],[-2*f,"2F"]); }
+  else { pts.push([f,"F"],[2*f,"2F"]); }
+  for(const [x,t] of pts){
+    if(x<XMIN||x>XMAX)continue;
+    el("circle",{cx:x,cy:0,r:0.55,fill:t==="F"?"var(--ink)":"var(--svgbg)",stroke:"var(--ink)","stroke-width":0.25},g.axis);
+    label(x,-(1.2+1.5*FS),t,"var(--ink)",2.1,"middle",g.axis,"700");
+  }
+  if(M.lens){ label(-25,-24.3,"物體這側","var(--muted)",1.9,"middle",g.axis); label(25,-24.3,"透鏡另一側（鏡後）","var(--muted)",1.9,"middle",g.axis); }
+  else { label(-25,-24.3,"鏡前（物體這側）","var(--muted)",1.9,"middle",g.axis); label(25,-24.3,"鏡後","var(--muted)",1.9,"middle",g.axis); }
+}
+function drawOptic(){
+  clear(g.optic);
+  const M=MODES[st.mode], H=20, c="var(--optic)";
+  if(M.lens){
+    const t=1.6;
+    let d;
+    if(M.sign>0) d=`M0,${-H} Q${t*2},0 0,${H} Q${-t*2},0 0,${-H} Z`;
+    else d=`M${-t},${-H} L${t},${-H} Q0.15,0 ${t},${H} L${-t},${H} Q-0.15,0 ${-t},${-H} Z`;
+    el("path",{d,fill:"var(--optic-fill)",stroke:c,"stroke-width":0.35},g.optic);
+    el("circle",{cx:0,cy:0,r:0.5,fill:c},g.optic);
+    label(2.4,-(1.2+1.5*FS),"鏡心","var(--optic)",1.8,"start",g.optic);
+    label(0,H+2,M.name,"var(--optic)",2.1,"middle",g.optic,"700");
+  }else{
+    // mirror: reflective surface faces left; hatch on the back (right)
+    const sag = M.sign===0?0:(M.sign>0?1.6:-1.6); // concave: edges bend toward object (left)
+    const d=`M${-sag},${-H} Q${sag},0 ${-sag},${H}`;
+    el("path",{d,fill:"none",stroke:c,"stroke-width":0.6},g.optic);
+    for(let y=-H+1;y<=H-1;y+=2.2){
+      const t=(y+H)/(2*H), x=(1-t)*(1-t)*(-sag)+2*(1-t)*t*sag+t*t*(-sag);
+      el("line",{x1:x,y1:y,x2:x+1.4,y2:y+1.4,stroke:c,"stroke-width":0.18,opacity:.7},g.optic);
+    }
+    el("circle",{cx:0,cy:0,r:0.45,fill:c},g.optic);
+    label(0,H+2,M.name,"var(--optic)",2.1,"middle",g.optic,"700");
+  }
+}
+function drawObject(){
+  clear(g.object);
+  const x=-st.u;
+  // invisible wide hit area
+  el("rect",{x:x-2.5,y:Y(st.h)-1,width:5,height:st.h+1.5,fill:"transparent","data-drag":"x"},g.object);
+  arrow(x,st.h,"var(--obj)",false,g.object,0.9);
+  const tip=el("circle",{cx:x,cy:Y(st.h)-1.6,r:1.1,fill:"var(--obj)",stroke:"var(--svgbg)","stroke-width":0.3,"data-drag":"h",style:"cursor:ns-resize"},g.object);
+  label(x,st.h+2.6+1.2*FS,"物體","var(--obj)",2,"middle",g.object,"700");
+}
+function drawRaysAndImage(){
+  clear(g.rays); clear(g.image);
+  const M=MODES[st.mode], s=solve(), u=st.u, h=st.h, P=[-u,h];
+  const colors=["var(--r1)","var(--r2)","var(--r3)"], marks=["url(#ah1)","url(#ah2)","url(#ah3)"];
+  const hide = st.quiz && !st.revealed;
+  const L=220;
+  const out=[];
+  // hit points on the optic (x=0 plane, paraxial)
+  let hits;
+  if(M.sign===0) hits=[h,0,-h*0.9];
+  else hits=[h,0,s.inf?null:s.iy];
+  const dirSign = M.lens?1:-1; // outgoing x direction
+  for(let i=0;i<3;i++){
+    if(!st.show[i]) continue;
+    const y0=hits[i]; if(y0===null||y0===undefined) continue;
+    if(Math.abs(y0)>24) continue;
+    const H=[0,y0];
+    let dir;
+    if(s.inf){ // object at focus: all outgoing rays parallel to the central ray's outgoing direction
+      dir = M.lens?[u,-h]:[-u,-h];
+      if(i===0) dir = M.lens?[st.f,-h]:[-st.f,-h];
+    } else {
+      const I=[s.ix,s.iy];
+      if(s.type==="real") dir=[I[0]-H[0],I[1]-H[1]];
+      else dir=[H[0]-I[0],H[1]-I[1]];
+      if(Math.sign(dir[0])!==dirSign && Math.abs(dir[0])>1e-9){dir=[-dir[0],-dir[1]];}
+      if(Math.abs(dir[0])<1e-9) dir=[dirSign,0];
+      if(s.type==="virtual" && !hide){ line(H,I,colors[i],true,g.rays); }
+    }
+    // construction for convex lens ray③ when object inside F (ray comes "from" F through object)
+    if(i===2 && !s.inf && !hide){
+      if(M.lens && M.sign>0 && u<st.f) line([-st.f,0],P,colors[i],true,g.rays);
+      if(M.lens && M.sign<0) line(H,[st.f,0],colors[i],true,g.rays);
+      if(!M.lens && M.sign>0 && u<st.f) line([-st.f,0],P,colors[i],true,g.rays);
+      if(!M.lens && M.sign<0) line(H,[st.f,0],colors[i],true,g.rays);
+    }
+    if(i===0 && !hide && !s.inf && M.sign<0){ // diverging: extension back through focus
+      // already covered by virtual extension to image; also show line to focus
+      const F = M.lens?[-st.f,0]:[st.f,0];
+      line(H,F,colors[i],true,g.rays);
+    }
+    if(hide){ rayPath([P,H],colors[i],marks[i],g.rays); continue; }
+    const end=extend(H,dir,L);
+    const mid=extend(H,dir,Math.min(14,Math.max(6,Math.abs(s.ix||10)*0.5)));
+    rayPath([P,H,mid,end],colors[i],marks[i],g.rays);
+  }
+  // image
+  const off=$("offscreen");
+  off.style.display="none";
+  if(!s.inf && !hide){
+    const vis = s.ix>XMIN && s.ix<XMAX && Math.abs(s.iy)<YMAX;
+    if(vis){
+      arrow(s.ix,s.iy,"var(--img)",s.type==="virtual",g.image,0.9);
+      label(s.ix+(s.ix<0?-1.8:1.8),s.iy+(s.iy>0?1.2:-2.6),s.type==="real"?"實像":"虛像","var(--img)",2,s.ix<0?"end":"start",g.image,"700");
+    } else { off.textContent="像在畫面外（很遠、很大）"; off.style.display="block"; }
+  } else if(s.inf && !hide){ off.textContent="光線平行射出，無法成像"; off.style.display="block"; }
+  return s;
+}
+
+/* ---------- text ---------- */
+function describe(s){
+  const M=MODES[st.mode], u=st.u, f=st.f;
+  const r={chips:[],pos:"–",size:"–",v:"–",explain:"",key:"",type:"",dir:"",sz:""};
+  if(s.inf){
+    r.type="無法成像"; r.chips=[["無法成像","none"]];
+    r.explain= M.lens ? "物體在焦點上：光線經凸透鏡後變成平行光，屏幕上無法成像，眼睛也看不到像。"
+                      : "物體在焦點上：光線經凹面鏡反射後變成平行光，無法成像（手電筒就是把燈泡放在焦點）。";
+    r.v="∞"; r.key="f"; return r;
+  }
+  const real=s.type==="real", up=s.m>0, am=Math.abs(s.m);
+  r.type=real?"實像":"虛像"; r.dir=up?"正立":"倒立";
+  r.sz= Math.abs(am-1)<0.02?"等大":(am>1?"放大":"縮小");
+  r.chips=[[r.dir,"neutral"],[r.sz,"neutral"],[r.type,real?"real":"virt"]];
+  r.v=fmt(Math.abs(s.v))+" cm";
+  r.size= r.sz==="等大" ? "和物體一樣大" : `物體的 ${am<10?am.toFixed(2).replace(/0$/,""):fmt(am)} 倍`;
+  if(M.lens){ r.pos = real ? "透鏡另一側（鏡後）" : "與物體同側（鏡前）"; }
+  else { r.pos = real ? "鏡前（與物體同側）" : "鏡後"; }
+  const near=(a,b)=>Math.abs(a-b)<0.05;
+  if(st.mode==="convexLens"){
+    if(near(u,2*f)){r.key="2f";r.explain="物在 2 倍焦距上：成倒立、等大的實像，像也恰好在另一側的 2 倍焦距上。";}
+    else if(u>2*f){r.key=">2f";r.explain="物在 2 倍焦距外：在另一側的焦距到 2 倍焦距之間，成倒立、縮小的實像（照相機就是這樣）。";}
+    else if(u>f){r.key="f-2f";r.explain="物在焦距與 2 倍焦距之間：像在另一側 2 倍焦距外，成倒立、放大的實像（投影機就是這樣）。";}
+    else {r.key="<f";r.explain="物在焦點內：光線折射後不會會聚，只有延長線交在物體同側，成正立、放大的虛像（放大鏡就是這樣）。屏幕接不到，要用眼睛透過透鏡看。";}
+  } else if(st.mode==="concaveLens"){
+    r.key="any"; r.explain="凹透鏡會使光線發散，物體放在任何位置都只能看到正立、縮小的虛像（近視眼鏡）。物體愈遠，像愈小。";
+  } else if(st.mode==="planeMirror"){
+    r.key="any"; r.size="和物體一樣大"; r.explain="平面鏡成像：像與物大小相等、以鏡面為中心對稱，物距＝像距，而且左右相反。紙屏上接不到，是虛像。";
+  } else if(st.mode==="concaveMirror"){
+    if(u<f){r.key="<f";r.explain="物在焦點內：成正立、放大的虛像（化妝鏡就是這樣）。";}
+    else if(near(u,2*f)){r.key="2f";r.explain="物在 2 倍焦距上：反射光真的會聚在鏡前，成倒立、等大的實像。";}
+    else if(u>2*f){r.key=">2f";r.explain="物在 2 倍焦距外：反射光會聚在鏡前，成倒立、縮小的實像。";}
+    else {r.key="f-2f";r.explain="物在焦距與 2 倍焦距之間：反射光會聚在鏡前，成倒立、放大的實像。";}
+  } else {
+    r.key="any"; r.explain="凸面鏡會使光線發散，所成的像都是正立、縮小的虛像，可以看到更大的範圍（超商、路口的凸面鏡、汽車後照鏡）。物體愈靠近，像愈大，但仍比物體小。";
+  }
+  return r;
+}
+
+const LEGEND={
+  convexLens:["平行主軸射入，折射後<b>通過另一側的焦點</b>。","射向<b>鏡心</b>，方向不變，直直穿過。","通過<b>物體這側的焦點</b>射入，折射後<b>平行主軸</b>。"],
+  concaveLens:["平行主軸射入，折射後發散，<b>延長線通過物體這側的焦點</b>。","射向<b>鏡心</b>，方向不變，直直穿過。","朝<b>另一側的焦點</b>射入，折射後<b>平行主軸</b>。"],
+  planeMirror:["垂直射向鏡面，沿原路反射回來。","斜射向鏡面，<b>入射角＝反射角</b>。","另一條斜射的光線，同樣遵守反射定律。"],
+  concaveMirror:["平行主軸射入，反射後<b>通過焦點</b>。","射向鏡面中央，<b>入射角＝反射角</b>。","通過<b>焦點</b>射入，反射後<b>平行主軸</b>（光的可逆性）。"],
+  convexMirror:["平行主軸射入，反射後發散，<b>延長線通過鏡後的焦點</b>。","射向鏡面中央，<b>入射角＝反射角</b>。","朝<b>鏡後的焦點</b>射入，反射後<b>平行主軸</b>。"]
+};
+const TABLES={
+  convexLens:{head:["物體位置","像的位置","正立／倒立","大小","實像／虛像","例子"],rows:[
+    [">2f","2 倍焦距外","另一側 f～2f 之間","倒立","縮小","實像","照相機"],
+    ["2f","2 倍焦距上","另一側 2f 上","倒立","等大","實像",""],
+    ["f-2f","f～2f 之間","另一側 2f 外","倒立","放大","實像","投影機"],
+    ["f","焦點上","無法成像","—","—","—","手電筒反過來"],
+    ["<f","焦點內","與物同側","正立","放大","虛像","放大鏡"]]},
+  concaveLens:{head:["物體位置","像的位置","正立／倒立","大小","實像／虛像","例子"],rows:[
+    ["any","任何位置","與物同側","正立","縮小","虛像","近視眼鏡"]]},
+  planeMirror:{head:["物體位置","像的位置","正立／倒立","大小","實像／虛像","例子"],rows:[
+    ["any","任何位置","鏡後，物距＝像距","正立（左右相反）","等大","虛像","穿衣鏡"]]},
+  concaveMirror:{head:["物體位置","像的位置","正立／倒立","大小","實像／虛像","例子"],rows:[
+    [">2f","2 倍焦距外","鏡前 f～2f 之間","倒立","縮小","實像","延伸"],
+    ["2f","2 倍焦距上","鏡前 2f 上","倒立","等大","實像","延伸"],
+    ["f-2f","f～2f 之間","鏡前 2f 外","倒立","放大","實像","延伸"],
+    ["f","焦點上","無法成像","—","—","—","手電筒"],
+    ["<f","焦點內","鏡後","正立","放大","虛像","化妝鏡"]]},
+  convexMirror:{head:["物體位置","像的位置","正立／倒立","大小","實像／虛像","例子"],rows:[
+    ["any","任何位置","鏡後","正立","縮小","虛像","路口反光鏡、後照鏡"]]}
+};
+
+function renderTable(key){
+  const T=TABLES[st.mode];
+  let h="<table><thead><tr>"+T.head.map(x=>`<th>${x}</th>`).join("")+"</tr></thead><tbody>";
+  for(const r of T.rows){ h+=`<tr class="${r[0]===key?"cur":""}">`+r.slice(1).map(x=>`<td>${x}</td>`).join("")+"</tr>"; }
+  h+="</tbody></table>";
+  if(st.mode==="concaveMirror") h+='<p class="note">課本 4-2 介紹的是焦點內（化妝鏡）的情況；標「延伸」的是凹面鏡在焦點外的成像，可以和凸透鏡比較看看。</p>';
+  $("tblWrap").innerHTML=h;
+}
+
+/* ---------- main render ---------- */
+function fit(){
+  const w=svg.getBoundingClientRect().width||window.innerWidth;
+  if(w<640){FS=Math.min(1.9,620/w*0.95);svg.setAttribute("viewBox","-46 -28 92 56");}
+  else{FS=1;svg.setAttribute("viewBox","-50 -26 100 52");}
+}
+window.addEventListener("resize",()=>{const o=FS;fit();if(o!==FS)render();});
+function render(){
+  const M=MODES[st.mode];
+  drawAxis(); drawOptic(); drawObject();
+  const s=drawRaysAndImage();
+  const r=describe(s);
+  const hide=st.quiz && !st.revealed;
+  $("resultBox").style.display=hide?"none":"block";
+  $("chips").innerHTML=r.chips.map(([t,c])=>`<span class="chip ${c}">${t}</span>`).join("");
+  $("uOut").textContent=fmt(st.u)+" cm";
+  $("vOut").textContent=r.v;
+  $("posOut").textContent=r.pos;
+  $("mOut").textContent=r.size;
+  $("explain").textContent=r.explain;
+  $("uSl").value=st.u; $("uLbl").textContent=fmt(st.u)+" cm";
+  $("hSl").value=st.h; $("hLbl").textContent=fmt(st.h);
+  $("fSl").value=st.f; $("fLbl").textContent=fmt(st.f)+" cm";
+  $("fRow").style.display=M.sign===0?"none":"flex";
+  $("legendList").innerHTML=LEGEND[st.mode].map((t,i)=>`<li><span class="sw" style="background:var(--r${i+1})"></span><span><b style="color:var(--r${i+1})">${"①②③"[i]}</b> ${t}</span></li>`).join("");
+  renderTable(r.key);
+  st._ans=r;
+}
+
+/* ---------- presets ---------- */
+function buildPresets(){
+  const M=MODES[st.mode], f=st.f, box=$("presets");
+  let list;
+  if(st.mode==="convexLens"||st.mode==="concaveMirror")
+    list=[["2f 外",2.6],["2f 上",2],["f～2f",1.5],["f 上",1],["f 內",0.55]];
+  else if(M.sign===0) list=[["遠",3],["中",1.6],["近",0.6]];
+  else list=[["遠",3.2],["2f",2],["f",1],["近",0.4]];
+  box.innerHTML="";
+  const lab=document.createElement("span"); lab.textContent="快速放置："; lab.style.cssText="font-size:.9rem;color:var(--muted);align-self:center";
+  box.appendChild(lab);
+  for(const [t,k] of list){
+    const b=document.createElement("button"); b.className="btn"; b.textContent=t;
+    b.onclick=()=>{st.u=Math.min(45,+(k*(M.sign===0?10:st.f)).toFixed(1)); afterMove(); };
+    box.appendChild(b);
+  }
+}
+function afterMove(){ if(st.quiz){st.revealed=false;resetQuizUI();} render(); }
+
+/* ---------- interaction ---------- */
+function svgPt(ev){const p=svg.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;const q=p.matrixTransform(svg.getScreenCTM().inverse());return [q.x,-q.y];}
+let drag=null;
+g.object.addEventListener("pointerdown",ev=>{
+  const kind=ev.target.getAttribute("data-drag")||"x";
+  drag={kind,id:ev.pointerId};
+  try{g.object.setPointerCapture(ev.pointerId);}catch(e){}
+  g.object.style.cursor="grabbing"; ev.preventDefault();
+});
+g.object.addEventListener("pointermove",ev=>{
+  if(!drag||ev.pointerId!==drag.id)return;
+  const [x,y]=svgPt(ev);
+  if(drag.kind==="h"){ st.h=Math.max(2,Math.min(12,Math.round(y*2)/2)); }
+  else{
+    let u=Math.max(1,Math.min(45,-x));
+    const M=MODES[st.mode];
+    if(M.sign!==0){ for(const k of [1,2]){ if(Math.abs(u-k*st.f)<0.6) u=k*st.f; } }
+    st.u=Math.round(u*10)/10;
+  }
+  if(st.quiz&&st.revealed){st.revealed=false;resetQuizUI();}
+  render();
+});
+function endDrag(){drag=null;g.object.style.cursor="grab";}
+g.object.addEventListener("pointerup",endDrag);
+g.object.addEventListener("pointercancel",endDrag);
+
+$("uSl").addEventListener("input",e=>{st.u=+e.target.value;afterMove();});
+$("hSl").addEventListener("input",e=>{st.h=+e.target.value;render();});
+$("fSl").addEventListener("input",e=>{st.f=+e.target.value;buildPresets();afterMove();});
+[1,2,3].forEach(i=>$("t"+i).addEventListener("change",e=>{st.show[i-1]=e.target.checked;render();}));
+$("tQuiz").addEventListener("change",e=>{st.quiz=e.target.checked;st.revealed=!st.quiz;resetQuizUI();$("quiz").classList.toggle("on",st.quiz);render();});
+
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{
+  st.mode=b.dataset.mode;
+  document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));
+  try{localStorage.setItem("optics-mode",st.mode);}catch(e){}
+  buildPresets(); afterMove();
+}));
+
+/* quiz */
+function resetQuizUI(){
+  st.guess={};
+  document.querySelectorAll("#quiz .q .btn").forEach(b=>b.setAttribute("aria-pressed","false"));
+  $("feedback").textContent=""; $("feedback").className="feedback";
+}
+document.querySelectorAll("#quiz .q").forEach(q=>q.addEventListener("click",e=>{
+  const b=e.target.closest(".btn"); if(!b)return;
+  q.querySelectorAll(".btn").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));
+  st.guess[q.dataset.q]=b.dataset.v;
+}));
+$("checkBtn").addEventListener("click",()=>{
+  const a=st._ans, gs=st.guess, fb=$("feedback");
+  let ok;
+  if(a.type==="無法成像") ok = gs.type==="無法成像";
+  else ok = gs.type===a.type && gs.dir===a.dir && gs.size===a.sz;
+  if(!gs.type){fb.textContent="先選選看再揭曉喔！";fb.className="feedback bad";return;}
+  st.revealed=true; render();
+  fb.textContent= ok ? "🎉 答對了！拖動物體到新位置再挑戰一次。" : `再想想～答案是：${a.type==="無法成像"?"無法成像":a.dir+"、"+a.sz+"的"+a.type}。看看光線是真的會聚，還是只有延長線交會？`;
+  fb.className="feedback "+(ok?"ok":"bad");
+});
+
+/* init */
+document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-pressed",x.dataset.mode===st.mode?"true":"false"));
+fit(); buildPresets(); render();
+})();
+</script>
+</body>
+</html>

@@ -47,7 +47,10 @@ h1 .hl{background:linear-gradient(transparent 62%,var(--sun) 62%)}
 .nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;gap:10px;flex-wrap:wrap;margin:26px 0 8px;padding:10px 0;background:var(--paper)}
 .nav a{font-weight:700;text-decoration:none;color:var(--ink);border:2px solid var(--ink);border-radius:99px;padding:6px 16px;background:var(--card);transition:transform .15s}
 .nav a:hover,.nav a:focus-visible{transform:translateY(-2px);outline:none}
-.nav a[data-g="7"]{box-shadow:3px 3px 0 var(--g7)} .nav a[data-g="8"]{box-shadow:3px 3px 0 var(--g8)} .nav a[data-g="9"]{box-shadow:3px 3px 0 var(--g9)}
+.nav a[data-g="7"]{box-shadow:3px 3px 0 var(--g7)} .nav a[data-g="8"]{box-shadow:3px 3px 0 var(--g8)} .nav a[data-g="9"]{box-shadow:3px 3px 0 var(--g9)} .nav a[data-g="all"]{box-shadow:3px 3px 0 var(--sun)}
+.nav a[aria-current="true"]{color:var(--card);background:var(--ink)}
+.nav a[data-g="7"][aria-current="true"]{background:var(--g7)} .nav a[data-g="8"][aria-current="true"]{background:var(--g8)} .nav a[data-g="9"][aria-current="true"]{background:var(--g9)}
+section[hidden]{display:none}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
 
 /* grade section */
@@ -133,6 +136,7 @@ section{margin-top:30px;scroll-margin-top:70px}
   </header>
 
   <nav class="nav" aria-label="年級">
+    <a href="#all" data-g="all">全部年級</a>
     <a href="#g7" data-g="7">七年級<span> · 臺灣</span></a>
     <a href="#g8" data-g="8">八年級<span> · 中國與東北亞</span></a>
     <a href="#g9" data-g="9">九年級<span> · 世界</span></a>
@@ -312,6 +316,25 @@ function setS(v){
   try{localStorage.setItem("roy-subj",v)}catch(e){}
 }
 btns.forEach(x=>x.onclick=()=>setS(x.dataset.s));
+// 年級篩選：點年級只顯示該年級，再點一次或點「全部年級」回到全部；網址 #g7 / #g8 / #g9 也能直接開
+const gl=[...document.querySelectorAll(".nav a[data-g]")];
+const nav=document.querySelector(".nav");
+function setG(g, scroll){
+  if(!["7","8","9"].includes(g)) g="all";
+  gl.forEach(a=>a.setAttribute("aria-current",a.dataset.g===g));
+  document.querySelectorAll("#grades section").forEach(sec=>sec.hidden=!(g==="all"||sec.id==="g"+g));
+  if(scroll && nav.getBoundingClientRect().top<=1) window.scrollTo({top:nav.offsetTop-10,behavior:"smooth"});
+}
+gl.forEach(a=>a.onclick=e=>{
+  e.preventDefault();
+  let g=a.dataset.g;
+  if(g!=="all" && a.getAttribute("aria-current")==="true") g="all";
+  try{history.replaceState(null,"",g==="all"?location.pathname+location.search:"#g"+g)}catch(_){}
+  setG(g,true);
+});
+const fromHash=()=>setG((location.hash.match(/^#g([789])$/)||[])[1]||"all",false);
+window.addEventListener("hashchange",fromHash);
+fromHash();
 try{const v=localStorage.getItem("roy-subj"); if(v&&SUBJ[v]||v==="all") setS(v)}catch(e){}
 </script>
 
